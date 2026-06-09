@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minimalist Osiloskop</title>
+    <style>
+        /* Apple tarzı minimalist ve koyu tema */
+        body {
+            background-color: #1c1c1e; /* Koyu gri/siyah arka plan */
+            color: #f5f5f7;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+            margin: 0;
+        }
+
+        .container {
+            background-color: #2c2c2e;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        canvas {
+            background-color: #000000;
+            border-radius: 8px;
+            border: 1px solid #3a3a3c;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #98989d;
+        }
+
+        /* Minimalist Slider (Range) Tasarımı */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            margin-top: -8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #3a3a3c;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <canvas id="osiloskop" width="500" height="400"></canvas>
+
+    <div class="controls">
+        <div class="control-group">
+            <label>Frekans: <span id="freqVal">500</span> Hz</label>
+            <input type="range" id="freq" min="100" max="1000" value="500" step="10">
+        </div>
+        <div class="control-group">
+            <label>Genlik (Vpp): <span id="vppVal">12</span> V</label>
+            <input type="range" id="vpp" min="2" max="24" value="12" step="1">
+        </div>
+        <div class="control-group">
+            <label>Time/Div: <span id="timeDivVal">1</span> ms/div</label>
+            <input type="range" id="timeDiv" min="0.1" max="5" value="1" step="0.1">
+        </div>
+        <div class="control-group">
+            <label>Volt/Div: <span id="voltDivVal">2</span> V/div</label>
+            <input type="range" id="voltDiv" min="0.5" max="5" value="2" step="0.5">
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('osiloskop');
+    const ctx = canvas.getContext('2d');
+
+    // HTML Input elemanlarını seçiyoruz
+    const freqSlider = document.getElementById('freq');
+    const vppSlider = document.getElementById('vpp');
+    const timeDivSlider = document.getElementById('timeDiv');
+    const voltDivSlider = document.getElementById('voltDiv');
+
+    // Değerleri ekranda göstermek için
+    const freqDisplay = document.getElementById('freqVal');
+    const vppDisplay = document.getElementById('vppVal');
+    const timeDivDisplay = document.getElementById('timeDivVal');
+    const voltDivDisplay = document.getElementById('voltDivVal');
+
+    const kareBoyutu = 50; // Her bir 'div' 50 piksel
+
+    function ciz() {
+        // Slider'lardan güncel değerleri çek ve sayıya çevir
+        const frekans = parseFloat(freqSlider.value);
+        const vpp = parseFloat(vppSlider.value);
+        const timeDiv = parseFloat(timeDivSlider.value);
+        const voltDiv = parseFloat(voltDivSlider.value);
+
+        // Ekrandaki yazıları güncelle
+        freqDisplay.innerText = frekans;
+        vppDisplay.innerText = vpp;
+        timeDivDisplay.innerText = timeDiv;
+        voltDivDisplay.innerText = voltDiv;
+
+        // 1. Ekranı Temizle
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // 2. Izgarayı (Grid) Çiz
+        ctx.strokeStyle = '#333333'; // Koyu gri çizgiler
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        
+        // Dikey çizgiler
+        for (let x = 0; x <= canvas.width; x += kareBoyutu) {
+            ctx.moveTo(x, 0);
+            ctx.lineTo(x, canvas.height);
+        }
+        // Yatay çizgiler
+        for (let y = 0; y <= canvas.height; y += kareBoyutu) {
+            ctx.moveTo(0, y);
+            ctx.lineTo(canvas.width, y);
+        }
+        ctx.stroke();
+
+        // Merkez eksenleri daha belirgin yap
+        ctx.strokeStyle = '#555555';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(0, canvas.height / 2); // X Ekseni (0V)
+        ctx.lineTo(canvas.width, canvas.height / 2);
+        ctx.moveTo(canvas.width / 2, 0);  // Y Ekseni (Merkez zaman)
+        ctx.lineTo(canvas.width / 2, canvas.height);
+        ctx.stroke();
+
+        // 3. Sinüs Dalgasını Çiz
+        ctx.strokeStyle = '#32d74b'; // Apple tarzı canlı yeşil
+        ctx.lineWidth = 3;
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+
+        // Ekranın temsil ettiği toplam süre (saniye cinsinden)
+        // 10 kare var, her kare timeDiv (ms) değerinde. ms'yi saniyeye çeviriyoruz (/1000)
+        const toplamSureSaniye = (10 * timeDiv) / 1000;
+
+        for (let x = 0; x < canvas.width; x++) {
+            // x pikselinin temsil ettiği zamanı bul
+            let t = (x / canvas.width) * toplamSureSaniye;
+
+            // Formül: V(t) = (Vpp / 2) * sin(2 * pi * f * t)
+            let voltaj = (vpp / 2) * Math.sin(2 * Math.PI * frekans * t);
+
+            // Voltajı Y eksenindeki piksele çevir
+            // 1 Kare = voltDiv kadar volt. 1 Kare = kareBoyutu (50) piksel.
+            // Piksel karşılığı = voltaj * (kareBoyutu / voltDiv)
+            let yPikselFarki = voltaj * (kareBoyutu / voltDiv);
+            
+            // Y ekseni HTML'de aşağı doğru arttığı için merkezden (canvas.height/2) çıkartıyoruz
+            let y = (canvas.height / 2) - yPikselFarki;
+
+            if (x === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        }
+        ctx.stroke();
+    }
+
+    // Slider'lar her değiştiğinde yeniden çiz
+    freqSlider.addEventListener('input', ciz);
+    vppSlider.addEventListener('input', ciz);
+    timeDivSlider.addEventListener('input', ciz);
+    voltDivSlider.addEventListener('input', ciz);
+
+    // Sayfa açıldığında ilk çizimi yap
+    ciz();
+</script>
+
+</body>
+</html>
