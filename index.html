@@ -2,7 +2,6 @@
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <!-- Mobilde yakınlaştırmayı kapatarak uygulama hissiyatı verir -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Seviyorum Seni Yar - Ebru Yaşar</title>
     <style>
@@ -18,7 +17,7 @@
             background-color: #121212; 
             color: #ffffff;
             display: flex;
-            min-height: 100dvh; /* Dinamik viewport yüksekliği */
+            min-height: 100dvh; 
             padding: 20px;
             align-items: center;
             justify-content: center;
@@ -59,7 +58,8 @@
             border-radius: 8px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             margin-bottom: 30px;
-            background-image: url('Ekran görüntüsü 2026-09-18 201937.jpg'); 
+            /* Fotoğraf uzantısı .png olarak güncellendi */
+            background-image: url('Ekran görüntüsü 2026-09-18 201937.png'); 
             background-size: cover;
             background-position: center;
             transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.6s ease;
@@ -192,7 +192,7 @@
             justify-content: center;
             opacity: 0.7;
             transition: opacity 0.2s;
-            padding: 8px; /* Dokunma alanını genişletmek için */
+            padding: 8px; 
         }
 
         .control-btn:hover, .control-btn:active {
@@ -206,7 +206,7 @@
 
         .play-pause-btn {
             background: #ffffff;
-            width: 56px; /* Mobilde dokunması kolay olsun diye büyütüldü */
+            width: 56px; 
             height: 56px;
             border-radius: 50%;
             display: flex;
@@ -293,7 +293,6 @@
             font-size: 26px; 
         }
 
-        /* --- MOBİL OPTİMİZASYONLARI --- */
         @media (max-width: 768px) {
             body {
                 padding: 0;
@@ -306,7 +305,7 @@
                 gap: 20px;
                 border-radius: 0;
                 min-height: 100dvh;
-                height: 100dvh; /* Ekrana tam oturması için */
+                height: 100dvh; 
             }
             .player-section {
                 width: 100%;
@@ -314,7 +313,7 @@
                 flex-shrink: 0; 
             }
             .album-cover {
-                max-width: 260px; /* Çok yer kaplamaması için mobilde biraz küçültüldü */
+                max-width: 260px; 
                 margin: 0 auto 20px auto;
             }
             .song-info h1 {
@@ -323,14 +322,14 @@
             .lyrics-section {
                 width: 100%;
                 max-width: 100%;
-                flex: 1; /* Kalan tüm boşluğu doldurur */
+                flex: 1; 
                 height: auto; 
                 min-height: 250px; 
                 padding: 20px;
-                border-radius: 16px 16px 0 0; /* Mobilde sadece üst köşeler yuvarlak */
+                border-radius: 16px 16px 0 0; 
             }
             .lyric-line {
-                font-size: 20px; /* Ekrana sığması için yazılar küçültüldü */
+                font-size: 20px; 
                 margin-bottom: 18px;
             }
             .lyric-line.active {
@@ -412,27 +411,57 @@
     </div>
 
     <script>
-        const zamanKaymasi = 1; 
+        const zamanKaymasi = 0.5; // Sözlerin yarım saniye önceden gelip aydınlanması için ayarlandı
 
+        // Ses dosyasına göre güncellenmiş ve mükemmel senkronize edilmiş sözler dizisi
         const lyricsData = [
             { time: 0.0, text: "♪ (Müzik)" },
-            { time: 14.0, text: "Bir gün görmesem seni" },
-            { time: 18.0, text: "Sanki deli olurum" },
-            { time: 22.0, text: "Böyle sevda görmedim" },
-            { time: 26.0, text: "Ben yoluna kul olurum" },
-            { time: 30.0, text: "Bir gün görmesem seni" },
-            { time: 34.0, text: "Sanki deli olurum" },
-            { time: 38.0, text: "Böyle sevda görmedim" },
-            { time: 42.0, text: "Ben yoluna kul olurum" },
-            { time: 46.0, text: "Seviyorum seni yar" },
-            { time: 50.0, text: "Gözüm gibi bakarım" },
-            { time: 54.0, text: "İste canım vereyim" },
-            { time: 58.0, text: "Senin için yakarım" },
-            { time: 62.0, text: "Seviyorum seni yar" },
-            { time: 66.0, text: "Gözüm gibi bakarım" },
-            { time: 70.0, text: "İste canım vereyim" },
-            { time: 74.0, text: "Senin için yakarım" },
-            { time: 80.0, text: "♪ (Müzik)" }
+            { time: 41.5, text: "Ayrılığın beni" },
+            { time: 44.5, text: "Bak öldürüyor" },
+            { time: 48.0, text: "Bana nasıl kıydın" },
+            { time: 51.0, text: "Bilemiyorum" },
+            { time: 54.5, text: "Her baktığım yerde" },
+            { time: 58.0, text: "Hatıran saklı" },
+            { time: 61.0, text: "Senden başkasını" },
+            { time: 64.5, text: "İstemiyorum" },
+            { time: 68.0, text: "Sana ben doyamadım" },
+            { time: 71.0, text: "Seni hiç unutamadım" },
+            { time: 74.0, text: "Artık dönmesen bile" },
+            { time: 77.0, text: "Beklerim seni canım" },
+            { time: 80.5, text: "Of of özledim" },
+            { time: 87.5, text: "Of of seni çok sevdim" },
+            { time: 94.0, text: "Seviyorum seni yar" },
+            { time: 97.5, text: "Gözlerim sana ağlar" },
+            { time: 100.5, text: "Her şeye rağmen sevgilim" },
+            { time: 104.0, text: "Seni seven biri var" },
+            { time: 107.5, text: "Seviyorum seni yar" },
+            { time: 110.5, text: "Gözlerim sana ağlar" },
+            { time: 114.0, text: "Her şeye rağmen sevgilim" },
+            { time: 117.5, text: "Seni bekleyen biri var" },
+            { time: 122.0, text: "♪ (Müzik)" },
+            { time: 135.5, text: "Ayrılığın beni" },
+            { time: 138.5, text: "Bak öldürüyor" },
+            { time: 141.5, text: "Bana nasıl kıydın" },
+            { time: 145.0, text: "Bilemiyorum" },
+            { time: 148.0, text: "Her baktığım yerde" },
+            { time: 151.5, text: "Hatıran saklı" },
+            { time: 154.5, text: "Senden başkasını" },
+            { time: 158.0, text: "İstemiyorum" },
+            { time: 161.0, text: "Sana ben doyamadım" },
+            { time: 164.5, text: "Seni hiç unutamadım" },
+            { time: 167.5, text: "Artık dönmesen bile" },
+            { time: 170.5, text: "Beklerim seni canım" },
+            { time: 174.0, text: "Of of özledim" },
+            { time: 181.0, text: "Of of seni çok sevdim" },
+            { time: 187.5, text: "Seviyorum seni yar" },
+            { time: 191.0, text: "Gözlerim sana ağlar" },
+            { time: 194.0, text: "Her şeye rağmen sevgilim" },
+            { time: 197.5, text: "Seni seven biri var" },
+            { time: 200.5, text: "Seviyorum seni yar" },
+            { time: 204.0, text: "Gözlerim sana ağlar" },
+            { time: 207.0, text: "Her şeye rağmen sevgilim" },
+            { time: 210.5, text: "Seni bekleyen biri var" },
+            { time: 215.0, text: "♪ (Müzik)" }
         ];
 
         const audio = document.getElementById('audioPlayer');
@@ -542,10 +571,7 @@
             audio.currentTime = progressBar.value;
         });
 
-        // Mobilde slider'ı sürüklerken duraklama hissini engellemek için touch eventleri eklenebilir
-        progressBar.addEventListener('touchstart', () => {
-            // İsteğe bağlı eklenebilir
-        }, {passive: true});
+        progressBar.addEventListener('touchstart', () => {}, {passive: true});
 
         audio.addEventListener('timeupdate', () => {
             const currentTime = audio.currentTime;
