@@ -24,19 +24,20 @@
             overflow-x: hidden;
         }
 
+        /* Sözler olmadığı için kartı daha kompakt ve merkeze oturan bir yapıya dönüştürdük */
         .main-wrapper {
             display: flex;
-            flex-direction: row;
-            gap: 40px;
+            flex-direction: column;
             width: 100%;
-            max-width: 950px;
+            max-width: 420px;
             background: linear-gradient(180deg, #1a2436 0%, #121212 100%);
             padding: 40px;
-            border-radius: 12px;
+            border-radius: 24px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
         }
 
         .player-section {
-            width: 350px;
+            width: 100%;
             display: flex;
             flex-direction: column;
         }
@@ -48,33 +49,32 @@
             letter-spacing: 1.5px;
             text-transform: uppercase;
             color: #b3b3b3;
-            margin-bottom: 24px;
+            margin-bottom: 30px;
         }
 
         .album-cover {
             width: 100%;
             aspect-ratio: 1 / 1;
             background-color: #282828;
-            border-radius: 8px;
+            border-radius: 12px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
             margin-bottom: 30px;
-            /* Fotoğraf uzantısı .png olarak güncellendi */
             background-image: url('Ekran görüntüsü 2026-09-18 201937.png'); 
             background-size: cover;
             background-position: center;
-            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.6s ease;
+            /* box-shadow transition'ı sese anlık tepki verebilmesi için kaldırıldı, sadece büyüme efekti kaldı */
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         }
 
         .album-cover.playing {
-            transform: scale(1.05);
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            transform: scale(1.03);
         }
 
         .song-details {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
         }
 
         .song-info h1 {
@@ -88,7 +88,7 @@
         }
 
         .song-info h2 {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 400;
             color: #b3b3b3;
         }
@@ -106,14 +106,14 @@
             transition: transform 0.1s;
         }
 
-        .like-btn:hover svg {
-            transform: scale(1.05);
+        .like-btn:hover svg, .like-btn:active svg {
+            transform: scale(1.1);
         }
 
         .custom-player {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 15px;
         }
 
         .progress-container {
@@ -128,7 +128,7 @@
         .progress-bar-wrapper {
             position: relative;
             flex: 1;
-            height: 12px;
+            height: 16px; /* Dokunma alanını mobilde büyüttük */
             display: flex;
             align-items: center;
             cursor: pointer;
@@ -154,7 +154,7 @@
             background: #ffffff;
             cursor: pointer;
             opacity: 0;
-            transition: opacity 0.2s;
+            transition: opacity 0.2s, transform 0.1s;
             position: relative;
             z-index: 3;
             box-shadow: 0 2px 4px rgba(0,0,0,0.5);
@@ -164,16 +164,12 @@
         .progress-bar-wrapper:hover .progress-bar::-webkit-slider-thumb,
         .progress-bar-wrapper:active .progress-bar::-webkit-slider-thumb {
             opacity: 1;
+            transform: scale(1.2);
         }
 
         .progress-bar-wrapper:hover .progress-bar,
         .progress-bar-wrapper:active .progress-bar {
             background: linear-gradient(to right, #1DB954 var(--progress-percent, 0%), #4d4d4d var(--progress-percent, 0%));
-        }
-
-        .progress-bar::-webkit-slider-runnable-track {
-            height: 4px;
-            border-radius: 2px;
         }
 
         .controls {
@@ -192,7 +188,7 @@
             justify-content: center;
             opacity: 0.7;
             transition: opacity 0.2s;
-            padding: 8px; 
+            padding: 10px; 
         }
 
         .control-btn:hover, .control-btn:active {
@@ -206,8 +202,8 @@
 
         .play-pause-btn {
             background: #ffffff;
-            width: 56px; 
-            height: 56px;
+            width: 64px; 
+            height: 64px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -223,8 +219,8 @@
 
         .play-pause-btn svg {
             fill: #000000;
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
         }
 
         .volume-container {
@@ -234,106 +230,12 @@
             margin-top: 15px;
         }
 
-        .lyrics-section {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background-color: #2b3648; 
-            border-radius: 12px;
-            padding: 24px;
-            height: 520px;
-        }
-
-        .lyrics-header {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 24px;
-            color: #ffffff;
-            flex-shrink: 0;
-        }
-
-        .lyrics-scroll-area {
-            flex: 1;
-            overflow: hidden; 
-            position: relative;
-            height: 100%;
-            width: 100%;
-            mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
-            -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 10%, black 90%, transparent 100%);
-        }
-
-        #lyricsWrapper {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94); 
-        }
-
-        .lyric-line {
-            font-size: 24px;
-            font-weight: 700;
-            color: #000000; 
-            opacity: 0.25;
-            margin-bottom: 24px;
-            line-height: 1.3;
-            transition: all 0.3s ease;
-            text-align: left;
-            cursor: pointer;
-        }
-
-        .lyric-line:hover:not(.active) {
-            color: #ffffff;
-            opacity: 0.6;
-        }
-
-        .lyric-line.active {
-            color: #ffffff;
-            opacity: 1;
-            font-size: 26px; 
-        }
-
-        @media (max-width: 768px) {
+        @media (max-width: 480px) {
             body {
-                padding: 0;
-                min-height: 100dvh;
+                padding: 15px;
             }
             .main-wrapper {
-                flex-direction: column;
-                align-items: center;
-                padding: 20px; 
-                gap: 20px;
-                border-radius: 0;
-                min-height: 100dvh;
-                height: 100dvh; 
-            }
-            .player-section {
-                width: 100%;
-                max-width: 100%;
-                flex-shrink: 0; 
-            }
-            .album-cover {
-                max-width: 260px; 
-                margin: 0 auto 20px auto;
-            }
-            .song-info h1 {
-                font-size: 22px;
-            }
-            .lyrics-section {
-                width: 100%;
-                max-width: 100%;
-                flex: 1; 
-                height: auto; 
-                min-height: 250px; 
-                padding: 20px;
-                border-radius: 16px 16px 0 0; 
-            }
-            .lyric-line {
-                font-size: 20px; 
-                margin-bottom: 18px;
-            }
-            .lyric-line.active {
-                font-size: 22px; 
+                padding: 30px 20px;
             }
             .volume-container {
                 display: none !important;
@@ -359,7 +261,7 @@
                 </button>
             </div>
 
-            <audio id="audioPlayer" src="seviyorum-seni-yar.mp3"></audio>
+            <audio id="audioPlayer" src="seviyorum-seni-yar_2.mp3"></audio>
 
             <div class="custom-player">
                 <div class="progress-container">
@@ -400,73 +302,10 @@
 
             </div>
         </div>
-
-        <div class="lyrics-section">
-            <div class="lyrics-header">Sözler</div>
-            <div class="lyrics-scroll-area" id="lyricsScrollArea">
-                <div id="lyricsWrapper">
-                </div>
-            </div>
-        </div>
     </div>
 
     <script>
-        const zamanKaymasi = 1; // Sözlerin yarım saniye önceden gelip aydınlanması için ayarlandı
-
-        // Ses dosyasına göre güncellenmiş ve mükemmel senkronize edilmiş sözler dizisi
-        const lyricsData = [
-            { time: 0.0, text: "♪ (Müzik)" },
-            { time: 41.5, text: "Ayrılığın beni" },
-            { time: 44.5, text: "Bak öldürüyor" },
-            { time: 48.0, text: "Bana nasıl kıydın" },
-            { time: 51.0, text: "Bilemiyorum" },
-            { time: 54.5, text: "Her baktığım yerde" },
-            { time: 58.0, text: "Hatıran saklı" },
-            { time: 61.0, text: "Senden başkasını" },
-            { time: 64.5, text: "İstemiyorum" },
-            { time: 68.0, text: "Sana ben doyamadım" },
-            { time: 71.0, text: "Seni hiç unutamadım" },
-            { time: 74.0, text: "Artık dönmesen bile" },
-            { time: 77.0, text: "Beklerim seni canım" },
-            { time: 80.5, text: "Of of özledim" },
-            { time: 87.5, text: "Of of seni çok sevdim" },
-            { time: 94.0, text: "Seviyorum seni yar" },
-            { time: 97.5, text: "Gözlerim sana ağlar" },
-            { time: 100.5, text: "Her şeye rağmen sevgilim" },
-            { time: 104.0, text: "Seni seven biri var" },
-            { time: 107.5, text: "Seviyorum seni yar" },
-            { time: 110.5, text: "Gözlerim sana ağlar" },
-            { time: 114.0, text: "Her şeye rağmen sevgilim" },
-            { time: 117.5, text: "Seni bekleyen biri var" },
-            { time: 122.0, text: "♪ (Müzik)" },
-            { time: 135.5, text: "Ayrılığın beni" },
-            { time: 138.5, text: "Bak öldürüyor" },
-            { time: 141.5, text: "Bana nasıl kıydın" },
-            { time: 145.0, text: "Bilemiyorum" },
-            { time: 148.0, text: "Her baktığım yerde" },
-            { time: 151.5, text: "Hatıran saklı" },
-            { time: 154.5, text: "Senden başkasını" },
-            { time: 158.0, text: "İstemiyorum" },
-            { time: 161.0, text: "Sana ben doyamadım" },
-            { time: 164.5, text: "Seni hiç unutamadım" },
-            { time: 167.5, text: "Artık dönmesen bile" },
-            { time: 170.5, text: "Beklerim seni canım" },
-            { time: 174.0, text: "Of of özledim" },
-            { time: 181.0, text: "Of of seni çok sevdim" },
-            { time: 187.5, text: "Seviyorum seni yar" },
-            { time: 191.0, text: "Gözlerim sana ağlar" },
-            { time: 194.0, text: "Her şeye rağmen sevgilim" },
-            { time: 197.5, text: "Seni seven biri var" },
-            { time: 200.5, text: "Seviyorum seni yar" },
-            { time: 204.0, text: "Gözlerim sana ağlar" },
-            { time: 207.0, text: "Her şeye rağmen sevgilim" },
-            { time: 210.5, text: "Seni bekleyen biri var" },
-            { time: 215.0, text: "♪ (Müzik)" }
-        ];
-
         const audio = document.getElementById('audioPlayer');
-        const lyricsWrapper = document.getElementById('lyricsWrapper');
-        const lyricsScrollArea = document.getElementById('lyricsScrollArea');
         const playPauseBtn = document.getElementById('playPauseBtn');
         const playIconSvg = document.getElementById('playIconSvg');
         const pauseIconSvg = document.getElementById('pauseIconSvg');
@@ -481,30 +320,60 @@
         const repeatBtn = document.getElementById('repeatBtn');
         const shuffleBtn = document.getElementById('shuffleBtn');
         
-        let currentLineIndex = -1;
         let isLiked = true; 
         let isRepeat = false; 
         let isShuffle = false; 
 
-        lyricsData.forEach((line, index) => {
-            const div = document.createElement('div');
-            div.className = 'lyric-line';
-            div.id = `line-${index}`;
-            div.innerText = line.text;
-            
-            div.addEventListener('click', () => {
-                audio.currentTime = line.time;
-                
-                if (audio.paused) {
-                    audio.play();
-                    playIconSvg.style.display = 'none';
-                    pauseIconSvg.style.display = 'block';
-                    albumCover.classList.add('playing'); 
-                }
-            });
+        // --- WEB AUDIO API (Sese Duyarlı Işık Efekti İçin) ---
+        let audioCtx;
+        let analyser;
+        let dataArray;
+        let audioSource;
 
-            lyricsWrapper.appendChild(div);
-        });
+        function initAudioReactive() {
+            if (audioCtx) return; 
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+                analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 128; // Frekans bandı sayısı
+                
+                audioSource = audioCtx.createMediaElementSource(audio);
+                audioSource.connect(analyser);
+                analyser.connect(audioCtx.destination);
+                
+                dataArray = new Uint8Array(analyser.frequencyBinCount);
+                animateGlow();
+            } catch (e) {
+                console.log("CORS engeli: Tarayıcı yerel dosyalarda Web Audio API kullanımını kısıtlamış olabilir. Çözüm için dosyaları bir sunucuya yükleyin.");
+            }
+        }
+
+        function animateGlow() {
+            requestAnimationFrame(animateGlow);
+            
+            if (!audio.paused) {
+                analyser.getByteFrequencyData(dataArray);
+                
+                // Özellikle bas sesleri (düşük frekanslar) hesaplanarak ışık şiddetine dönüştürülür
+                let bassSum = 0;
+                for (let i = 0; i < 15; i++) {
+                    bassSum += dataArray[i];
+                }
+                let avgBass = bassSum / 15;
+                let intensity = avgBass / 255; 
+                
+                // Şiddete göre yayılma ve parlaklık hesaplanır (Gece/Buz Mavisi tonları kullanıldı)
+                let spread = intensity * 35; 
+                let blur = 20 + (intensity * 40);
+                
+                albumCover.style.boxShadow = `0 0 ${blur}px ${spread}px rgba(80, 160, 255, ${0.3 + intensity * 0.7})`;
+            } else {
+                // Şarkı durduğunda orijinal, sönük gölgeye geri döner
+                albumCover.style.boxShadow = `0 10px 30px rgba(0, 0, 0, 0.4)`;
+            }
+        }
+        // -----------------------------------------------------
 
         function formatTime(seconds) {
             if (isNaN(seconds)) return "0:00";
@@ -552,6 +421,14 @@
         });
 
         function togglePlayPause() {
+            // İlk oynatışta sese duyarlı ışık sistemini aktif eder
+            initAudioReactive();
+            
+            // Eğer AudioContext uyku modundaysa (tarayıcı kuralları gereği) uyandırır
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
             if (audio.paused) {
                 audio.play();
                 playIconSvg.style.display = 'none';
@@ -582,67 +459,22 @@
             const progressPercent = (currentTime / audio.duration) * 100;
             progressBar.style.setProperty('--progress-percent', `${progressPercent}%`);
             progressBar.style.background = `linear-gradient(to right, #1DB954 ${progressPercent}%, #4d4d4d ${progressPercent}%)`;
-            
-            const adjustedTime = currentTime + zamanKaymasi;
-
-            let activeIndex = -1;
-            for (let i = 0; i < lyricsData.length; i++) {
-                if (adjustedTime >= lyricsData[i].time) {
-                    activeIndex = i;
-                } else {
-                    break;
-                }
-            }
-
-            if (activeIndex !== currentLineIndex && activeIndex !== -1) {
-                if (currentLineIndex !== -1) {
-                    const prevLine = document.getElementById(`line-${currentLineIndex}`);
-                    if(prevLine) prevLine.classList.remove('active');
-                }
-                
-                const currentLine = document.getElementById(`line-${activeIndex}`);
-                if(currentLine) {
-                    currentLine.classList.add('active');
-                    
-                    const containerHeight = lyricsScrollArea.clientHeight;
-                    const lineOffsetTop = currentLine.offsetTop;
-                    const lineHeight = currentLine.clientHeight;
-                    
-                    const offset = (containerHeight / 2) - lineOffsetTop - (lineHeight / 2);
-                    
-                    lyricsWrapper.style.transform = `translateY(${offset}px)`;
-                }
-                currentLineIndex = activeIndex;
-            }
         });
 
         audio.addEventListener('ended', () => {
             albumCover.classList.remove('playing'); 
+            albumCover.style.boxShadow = `0 10px 30px rgba(0, 0, 0, 0.4)`;
             
             if (isRepeat) {
                 audio.currentTime = 0;
                 audio.play();
                 albumCover.classList.add('playing'); 
-                
-                lyricsWrapper.style.transform = `translateY(0px)`;
-                if (currentLineIndex !== -1) {
-                    const prevLine = document.getElementById(`line-${currentLineIndex}`);
-                    if(prevLine) prevLine.classList.remove('active');
-                    currentLineIndex = -1;
-                }
             } else {
                 playIconSvg.style.display = 'block';
                 pauseIconSvg.style.display = 'none';
                 progressBar.value = 0;
                 progressBar.style.background = `#4d4d4d`;
                 currentTimeEl.innerText = "0:00";
-                lyricsWrapper.style.transform = `translateY(0px)`;
-                
-                if (currentLineIndex !== -1) {
-                    const prevLine = document.getElementById(`line-${currentLineIndex}`);
-                    if(prevLine) prevLine.classList.remove('active');
-                    currentLineIndex = -1;
-                }
             }
         });
 
