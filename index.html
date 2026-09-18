@@ -24,7 +24,6 @@
             overflow-x: hidden;
         }
 
-        /* Sözler olmadığı için kartı daha kompakt ve merkeze oturan bir yapıya dönüştürdük */
         .main-wrapper {
             display: flex;
             flex-direction: column;
@@ -62,12 +61,27 @@
             background-image: url('Ekran görüntüsü 2026-09-18 201937.png'); 
             background-size: cover;
             background-position: center;
-            /* box-shadow transition'ı sese anlık tepki verebilmesi için kaldırıldı, sadece büyüme efekti kaldı */
-            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: all 0.5s ease;
+        }
+
+        /* %100 her yerde çalışan nabız/neon efekti animasyonu */
+        @keyframes pulseGlow {
+            0% { 
+                box-shadow: 0 0 15px 5px rgba(80, 160, 255, 0.3); 
+                transform: scale(1.02); 
+            }
+            50% { 
+                box-shadow: 0 0 35px 15px rgba(80, 160, 255, 0.7); 
+                transform: scale(1.05); 
+            }
+            100% { 
+                box-shadow: 0 0 15px 5px rgba(80, 160, 255, 0.3); 
+                transform: scale(1.02); 
+            }
         }
 
         .album-cover.playing {
-            transform: scale(1.03);
+            animation: pulseGlow 2.5s infinite ease-in-out;
         }
 
         .song-details {
@@ -128,7 +142,7 @@
         .progress-bar-wrapper {
             position: relative;
             flex: 1;
-            height: 16px; /* Dokunma alanını mobilde büyüttük */
+            height: 16px; 
             display: flex;
             align-items: center;
             cursor: pointer;
@@ -261,6 +275,7 @@
                 </button>
             </div>
 
+            <!-- Mp3 dosyası adı yine sabit -->
             <audio id="audioPlayer" src="seviyorum-seni-yar_2.mp3"></audio>
 
             <div class="custom-player">
@@ -324,57 +339,6 @@
         let isRepeat = false; 
         let isShuffle = false; 
 
-        // --- WEB AUDIO API (Sese Duyarlı Işık Efekti İçin) ---
-        let audioCtx;
-        let analyser;
-        let dataArray;
-        let audioSource;
-
-        function initAudioReactive() {
-            if (audioCtx) return; 
-            try {
-                const AudioContext = window.AudioContext || window.webkitAudioContext;
-                audioCtx = new AudioContext();
-                analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 128; // Frekans bandı sayısı
-                
-                audioSource = audioCtx.createMediaElementSource(audio);
-                audioSource.connect(analyser);
-                analyser.connect(audioCtx.destination);
-                
-                dataArray = new Uint8Array(analyser.frequencyBinCount);
-                animateGlow();
-            } catch (e) {
-                console.log("CORS engeli: Tarayıcı yerel dosyalarda Web Audio API kullanımını kısıtlamış olabilir. Çözüm için dosyaları bir sunucuya yükleyin.");
-            }
-        }
-
-        function animateGlow() {
-            requestAnimationFrame(animateGlow);
-            
-            if (!audio.paused) {
-                analyser.getByteFrequencyData(dataArray);
-                
-                // Özellikle bas sesleri (düşük frekanslar) hesaplanarak ışık şiddetine dönüştürülür
-                let bassSum = 0;
-                for (let i = 0; i < 15; i++) {
-                    bassSum += dataArray[i];
-                }
-                let avgBass = bassSum / 15;
-                let intensity = avgBass / 255; 
-                
-                // Şiddete göre yayılma ve parlaklık hesaplanır (Gece/Buz Mavisi tonları kullanıldı)
-                let spread = intensity * 35; 
-                let blur = 20 + (intensity * 40);
-                
-                albumCover.style.boxShadow = `0 0 ${blur}px ${spread}px rgba(80, 160, 255, ${0.3 + intensity * 0.7})`;
-            } else {
-                // Şarkı durduğunda orijinal, sönük gölgeye geri döner
-                albumCover.style.boxShadow = `0 10px 30px rgba(0, 0, 0, 0.4)`;
-            }
-        }
-        // -----------------------------------------------------
-
         function formatTime(seconds) {
             if (isNaN(seconds)) return "0:00";
             const min = Math.floor(seconds / 60);
@@ -421,16 +385,10 @@
         });
 
         function togglePlayPause() {
-            // İlk oynatışta sese duyarlı ışık sistemini aktif eder
-            initAudioReactive();
-            
-            // Eğer AudioContext uyku modundaysa (tarayıcı kuralları gereği) uyandırır
-            if (audioCtx && audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-
             if (audio.paused) {
-                audio.play();
+                audio.play().catch(error => {
+                    console.error("Şarkı çalma hatası. Dosya ismi veya konumu yanlış olabilir:", error);
+                });
                 playIconSvg.style.display = 'none';
                 pauseIconSvg.style.display = 'block';
                 albumCover.classList.add('playing'); 
@@ -463,7 +421,6 @@
 
         audio.addEventListener('ended', () => {
             albumCover.classList.remove('playing'); 
-            albumCover.style.boxShadow = `0 10px 30px rgba(0, 0, 0, 0.4)`;
             
             if (isRepeat) {
                 audio.currentTime = 0;
